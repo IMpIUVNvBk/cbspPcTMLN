@@ -4,8 +4,41 @@ serpent = (loadfile "serpent.lua")()
 http = require("socket.http")
 get = http.request
 sudo = 590740002
-bot = SERVER-NUMBER * ON-SERVER + BOT-ID
+bot = (SERVER-NUMBER -1) * ON-SERVER + BOT-ID
 ---------------Info---------------
+if redis:scard('emoji') ~= 0 then
+redis:sadd('emoji','\xF0\x9F\x98\x81')
+redis:sadd('emoji','\xF0\x9F\x98\x82')
+redis:sadd('emoji','\xF0\x9F\x98\x83')
+redis:sadd('emoji','\xF0\x9F\x98\x84')
+redis:sadd('emoji','\xF0\x9F\x98\x85')
+redis:sadd('emoji','\xF0\x9F\x98\x86')
+redis:sadd('emoji','\xF0\x9F\x98\x89')
+redis:sadd('emoji','\xF0\x9F\x98\x8A')
+redis:sadd('emoji','\xF0\x9F\x98\x8B')
+redis:sadd('emoji','\xF0\x9F\x98\x8C')
+redis:sadd('emoji','\xF0\x9F\x98\x8D')
+redis:sadd('emoji','\xF0\x9F\x98\x8F')
+redis:sadd('emoji','\xF0\x9F\x98\x92')
+redis:sadd('emoji','\xF0\x9F\x98\x93')
+redis:sadd('emoji','\xF0\x9F\x98\x94')
+redis:sadd('emoji','\xF0\x9F\x98\x96')
+redis:sadd('emoji','\xF0\x9F\x98\x98')
+redis:sadd('emoji','\xF0\x9F\x98\x9A')
+redis:sadd('emoji','\xF0\x9F\x98\x9C')
+redis:sadd('emoji','\xF0\x9F\x98\x9D')
+redis:sadd('emoji','\xF0\x9F\x98\x9E')
+redis:sadd('emoji','\xF0\x9F\x98\xA0')
+redis:sadd('emoji','\xF0\x9F\x98\xA1')
+redis:sadd('emoji','\xF0\x9F\x98\xA2')
+redis:sadd('emoji','\xF0\x9F\x98\xA3')
+redis:sadd('emoji','\xF0\x9F\x98\xA4')
+redis:sadd('emoji','\xF0\x9F\x98\xA5')
+redis:sadd('emoji','\xF0\x9F\x98\xA8')
+redis:sadd('emoji','\xF0\x9F\x98\xA9')
+redis:sadd('emoji','\xF0\x9F\x98\xAA')
+redis:sadd('emoji','\xF0\x9F\x98\xAB')
+end
 function varinfo()
 if redis:get('botBOT-IDnum') then
 local phone = "+"..redis:get('botBOT-IDnum')
@@ -414,9 +447,9 @@ end
 		local ran2 = rands(math.random(2,3),'abcdefghijklmnopqrstuvwxyz')
 		local ran3 = rands(math.random(5,6),'abcdefghijklmnopqrstuvwxyz')
 		local ran4 = rands(math.random(3,4),'abcdefghijklmnopqrstuvwxyz')
-		local ran5 = rands(1,'. ? !')
+		local ran5 = rands(1,'.?!')
 		local ran6 = rands(math.random(1,4),'😀😃😄😁😆😅😂🤣☺️😊😇🙂🙃😉😌😍😘😗😙😚😋😜😝😛🤗🤑🤓😎🤡🤠😏😒😞😔😟😕🙁☹️😣😖😫😩😤😠😡😶😐😑😯😦😧😮😲😵😳😱😨😰😢😥🤤😭😓😪😴🙄🤔🤥😬🤐🤢🤧😷🤒🤕😈👿😼😽🙀😿😾😻😹😸😺👐🏻🙌🏽👏🏾🙏🏼🤝👍👎🏽👊🏻✊️🤘🏼👌👌🏾👈🏻👋🏻🤙🏻')
-		return rand1 .. rand2 .. rand3 .. rand4 .. rand5 .. rand6
+		return ran1 .. " " .. ran2 .. " " .. ran3 .. " " .. ran4 .. " " .. ran5 .. redis:srandmember('emoji') .. redis:srandmember('emoji')
 		
 end
 function test (i,purya)
@@ -852,7 +885,7 @@ end
 			redis:sadd('botBOT-IDbanlist', "tab")
 			redis:sadd('botBOT-IDbanlist', "فروش")
 		send(msg.chat_id, 0, randomtext())
-        elseif text:match("^([Rr])$")then
+		elseif text:match("^([Rr])$")then
           local list = redis:smembers("botBOT-IDsupergroups")
           for x = 1, #list do
 
@@ -864,7 +897,7 @@ end
 
           end
           return send(msg.chat_id, 0, randomtext())
-        elseif text:match("^([Ss]ts)$") then
+        elseif text:match("^([Pp]l)$") then
 		  local autofwd = redis:get('botBOT-IDautoforward') and "✅️" or "⛔️"
 		  local autofwdtime1 = redis:get("botBOT-IDautoforward") and redis:ttl("botBOT-IDautoforward") or 0
 		  local autofwdtime = tonumber(autofwdtime1) / 60
@@ -885,10 +918,10 @@ end
 		  for i,v in pairs(redis:smembers('botBOT-IDfmsg')) do
 		  local times = math.ceil(redis:get('botBOT-IDmsg'..v)) or 0
 
-			fmsg = fmsg .. i .. ". "..v .. "        ".. tonumber(times) .. " بار".. "\n"
+			fmsg = fmsg .. i .. ". "..v .. "        ".. tonumber(times) .. " t".. "\n"
 		  end
-		  local fchat = redis:get('botBOT-IDfchat') or "ثبت نشده"
-          local nowf = redis:get('botBOT-IDlastforward') or "خالی"
+		  local fchat = redis:get('botBOT-IDfchat') or "-"
+          local nowf = redis:get('botBOT-IDlastforward') or "-"
 		  local text = [[B]]..bot.. [[ j(]]..tostring(offjoin).. [[) - a(]] .. tostring(offlink) .. [[) - f(]] .. tostring(nlink) ..[[)
 		  
 af : ]]..tostring(autofwd)..[[ f ]] .. round(autofwdtime, 0.1) .. [[ m
@@ -936,7 +969,7 @@ n a ]].. tostring(accept) ..[[ s
 s l : ]].. tostring(links)
         return send(msg.chat_id,0, text, {_ = 'textParseModeMarkdown'})
        
-		elseif (text:match("^([Ss]t)$") and msg.reply_to_message_id ~= 0) then
+		elseif (text:match("^([Ss]p)$") and msg.reply_to_message_id ~= 0) then
 		redis:sadd("botBOT-IDfmsg",math.ceil(tonumber(msg.reply_to_message_id)))
 		redis:set("botBOT-IDmsg"..math.ceil(tonumber(msg.reply_to_message_id)), 0)
 		redis:set("botBOT-IDfchat",math.ceil(tonumber(msg.chat_id)))
