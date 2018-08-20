@@ -1,0 +1,207 @@
+#!/usr/bin/env bash
+THIS_DIR=$(cd "$(dirname "$0")"; pwd)
+
+## Print Colorful
+# Print text in red
+prtred() {
+	printf '\e[1;31m%s\n\e[0;39;49m' "$@"
+}
+# Print text in green
+prtgrn() {
+	printf '\e[1;32m%s\n\e[0;39;49m' "$@"
+}
+# Print text in brown
+prtbrown() {
+	printf '\e[1;33m%s\n\e[0;39;49m' "$@"
+}
+
+# autolauncher
+autolaunchmod() {
+	while true ; do
+		for nms in bot-*.lua ; do
+			tab="${nms%.*}"
+			ltab="${tab/-/ }"
+			tmux kill-session -t $tab
+			rm -rf .telegram-bot/$tab/files
+			for tg in .telegram-bot/$tab/data/* ; do
+				rm -rf $tg/*
+			done
+			TMUX= tmux new-session -d -s $tab "./$ltab"
+			tmux detach -s $tab
+		done
+		echo -e "Bots are running!"
+		sleep 1200
+	done 
+}
+# clear a bot
+clear() {
+	rm -rf .telegram-bot/bot-"$1"
+	rm -rf bot-"$1".lua
+	redis-cli --raw keys "bot"$1* | xargs redis-cli del
+	prtgrn '
+  >> Bot number '$1' seccessfuly deleted.
+ '
+}
+# install Bots
+gettg() {
+prtgrn '
+ >> Give me tdbot link
+ '
+		read link
+		wget "$link" -O telegram-bot
+		chmod +x telegram-bot
+}
+install() {
+
+		
+		prtgrn '
+ >> Updating old packages
+ '
+		sudo apt-get -y update && sudo apt-get -y upgrade 
+		prtgrn '
+ >> Installing Essentials packages
+ '
+		sudo apt-get --force-yes install git wget screen tmux libconfig9 libevent-dev libjansson4 libstdc++6 lua-socket lua5.2 liblua5.2 make unzip redis-server software-properties-common g++ libconfig++-dev
+		sudo apt-get -y update && sudo apt-get -y upgrade
+		sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test && sudo apt-get -y update && sudo apt-get --force-yes install gcc-4.9 g++-4.9 && sudo update-alternatives —install /usr/bin/gcc gcc /usr/bin/gcc-4.9 60 —slave /usr/bin/g++ g++ /usr/bin/g++-4.9
+		sudo apt-get install liblua5.3
+		prtgrn '
+ >> Updating packages
+ '
+		sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get -y dist-upgrade && sudo apt-get -y autoremove
+		prtgrn '
+ >> Restarting redis service
+ '
+		sudo service redis-server restart
+
+		printf 'DONE !'
+
+}
+updatesource() {
+prtgrn 'Shomare Server Chande ?'
+read server_number
+
+prtgrn 'Ro Har Server ChanTa Hast ?'
+read on_server
+git clone https://github.com/IMpIUVNvBk/cbspPcTMLN.git && mv cbspPcTMLN/AEzSfzUNDL.lua bot.lua
+rm -rf "cbspPcTMLN"
+sed -i 's/SERVER-NUMBER/'$server_number'/g' bot.lua
+sed -i 's/ON-SERVER/'$on_server'/g' bot.lua
+
+
+}
+# make config file
+make_config() {
+	mkdir -p "$THIS_DIR"/.telegram-bot/bot-"$1"
+	cfg="$THIS_DIR"/.telegram-bot/bot-$1/bot.cfg
+	bot="$THIS_DIR"/bot-$1.lua
+	if [[ ! -f $cfg ]]; then
+		echo "#Its NMS
+default_profile = \"bot$1\";
+bot$1 = {
+	config_directory = \"$THIS_DIR/.telegram-bot/bot-$1\";
+	test = false;
+	use_file_db = true;
+	use_file_gc = true;
+	file_readable_names = true;
+	use_secret_chats = false;
+	use_chat_info_db = true;
+	use_message_db = true;
+	verbosity = 0;
+	lua_script = \"$THIS_DIR/bot-$1.lua\";
+};" >> $cfg
+	fi
+	if [[ ! -f $bot ]]; then
+		cat bot.lua >> bot-$1.lua
+		sed -i 's/BOT-ID/'$1'/g' bot-$1.lua
+	fi
+}
+# login
+login() {
+	clear $1
+	make_config $1
+	prtgrn '
+>> Inter the bot phone number: 
+ '
+	read -rp ' ' number
+	num=${number/+/00}
+	./telegram-bot -c "$THIS_DIR"/.telegram-bot/bot-$1/bot.cfg --login --phone="${num// /}"
+	run $1
+}
+# run a bot
+run() {
+	./telegram-bot -c "$THIS_DIR"/.telegram-bot/bot-$1/bot.cfg 
+}
+# help and usage
+usage() {
+	printf "\e[1;36m"
+	cat <<EOF
+>> Usage: $0 [options]
+    Options:
+      autolaunch        Launch all bots every 20 mins
+      NUMBER            Start bot whit this ID number
+      install           Install of Bot
+	  login [id]        login to bot
+      help              Print this message
+	  clr [id]          clean data of Bot     
+EOF
+	printf "%s\n\e[0;39;49m"
+}
+## MAIN ------------------------------------------------------------------------
+# Make sure this script run inside Bot directory
+cd "$THIS_DIR" || exit
+case $1 in
+	install)
+		install
+	;;
+    tg)
+		gettg
+	;;
+    update)
+		updatesource
+	;;
+	autolaunch)
+		tmux kill-session -t autolaunch
+		tmux new-session -s autolaunch "bash bot autolaunchmod"
+	;;
+	autolaunchmod)
+		autolaunchmod
+	;;
+	help)
+		usage
+	;;
+	clr)
+		if [ -z "$2" ]; then
+			prtgrn '
+  >> Inter the BOT-ID,that you wanna delete :
+ '
+			read -rp ' ' ID
+			clear "$ID"
+		else
+			clear "$2"
+		fi
+	;;
+	login)
+		if [ -z "$2" ]; then
+			prtgrn '
+  >> Inter the BOT-ID,that you wanna login :
+ '
+			read -rp ' ' ID
+			login $ID
+		else
+			login "$2"
+		fi
+	;;
+	*)
+		if [[ "$1" =~ ^[0-9]+$ ]] ; then
+			if [ -a "$THIS_DIR"/bot-"$1".lua ]; then
+				make_config $1
+				run $1
+			else
+				login $1
+			fi
+		else
+			usage
+		fi
+	;;
+esac
