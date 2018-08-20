@@ -6,7 +6,7 @@ THIS_DIR=$(cd "$(dirname "$0")"; pwd)
 prtred() {
 	printf '\e[1;31m%s\n\e[0;39;49m' "$@"
 }
-# Print text in green
+# Print text in green2
 prtgrn() {
 	printf '\e[1;32m%s\n\e[0;39;49m' "$@"
 }
