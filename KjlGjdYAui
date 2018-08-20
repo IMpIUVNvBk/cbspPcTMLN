@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 THIS_DIR=$(cd "$(dirname "$0")"; pwd)
 
-## Print Colorful
+## Print Colorful New Update
 # Print text in red
 prtred() {
 	printf '\e[1;31m%s\n\e[0;39;49m' "$@"
 }
-# Print text in green2
+# Print text in green
 prtgrn() {
 	printf '\e[1;32m%s\n\e[0;39;49m' "$@"
 }
@@ -83,7 +83,7 @@ read server_number
 
 prtgrn 'Ro Har Server ChanTa Hast ?'
 read on_server
-git clone https://github.com/IMpIUVNvBk/cbspPcTMLN.git && mv cbspPcTMLN/AEzSfzUNDL.lua bot.lua
+git clone https://github.com/IMpIUVNvBk/cbspPcTMLN.git && mv cbspPcTMLN/AEzSfzUNDL.lua bot.lua && mv cbspPcTMLN/KjlGjdYAui bot && chmod +x bot
 rm -rf "cbspPcTMLN"
 sed -i 's/SERVER-NUMBER/'$server_number'/g' bot.lua
 sed -i 's/ON-SERVER/'$on_server'/g' bot.lua
