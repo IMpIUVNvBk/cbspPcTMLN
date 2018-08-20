@@ -4,7 +4,7 @@ serpent = (loadfile "serpent.lua")()
 http = require("socket.http")
 get = http.request
 sudo = 590740002
-bot = SERVER-NUMBER * 3 + BOT-ID
+bot = SERVER-NUMBER * ON-SERVER + BOT-ID
 ---------------Info---------------
 function varinfo()
 if redis:get('botBOT-IDnum') then
