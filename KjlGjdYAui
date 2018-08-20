@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 THIS_DIR=$(cd "$(dirname "$0")"; pwd)
 
-## Print Colorful New Update
+## Print Colorful 
 # Print text in red
 prtred() {
 	printf '\e[1;31m%s\n\e[0;39;49m' "$@"
