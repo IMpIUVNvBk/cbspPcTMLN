@@ -6,7 +6,7 @@ get = http.request
 sudo = 590740002
 bot = (SERVER-NUMBER -1) * ON-SERVER + BOT-ID
 ---------------Info---------------
-if redis:scard('emoji') ~= 0 then
+if redis:scard('emoji') == 0 then
 redis:sadd('emoji','\xF0\x9F\x98\x81')
 redis:sadd('emoji','\xF0\x9F\x98\x82')
 redis:sadd('emoji','\xF0\x9F\x98\x83')
