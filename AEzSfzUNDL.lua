@@ -128,7 +128,7 @@ function checkisinforwardmode()
 			redis:set('botBOT-IDmsg'..fmsg,msgplus)
 		
 		else
-        send(fwd_fromchatid, 0, 'با موفقیت ارسال شد!')
+        send(fwd_fromchatid, 0, 'OK ,Im ready now ')
 		end
 	  end
     end
@@ -232,7 +232,7 @@ for n, s in pairs(list) do
 end
 local esttime = tonumber(delay) * tonumber(listcount)
 if not redis:get('botBOT-IDautoforward') then
-	send(from_chat_id, 0, 'لطفا '.. tostring(esttime) .. ' ثانیه صبر کنید')
+	send(from_chat_id, 0, 'plz wait '.. tostring(esttime) .. 's '..redis:srandmember('emoji'))
 end
 for i, v in pairs(list) do
   redis:sadd('botBOT-IDfwd_targetlist', v)
@@ -928,14 +928,10 @@ af : ]]..tostring(autofwd)..[[ f ]] .. round(autofwdtime, 0.1) .. [[ m
 fd : ]].. math.ceil(afd) ..[[ m
 nf : ]] .. math.ceil(naf) ..[[ s
 fs : ]] ..tostring(fchat)..[[
-
 fp : 
 ]] ..tostring(fmsg)..[[
-
 dbf : ]]..tostring(fwdd).. [[
-
 fr: ]]..tostring(fwdr).. [[
-
 is f ? : ]]..tostring(isfwd).. [[ - ]]..tonumber(fwd_targetlistcount)..[[ - and ]]..tonumber(total)..[[ s	
 lf : ]]..tostring(nowf)
 
@@ -954,18 +950,11 @@ lf : ]]..tostring(nowf)
           local text = [[B]]..bot.. [[ :
 		  
 Sgps : ]].. tostring(sgps) ..[[
-
 U : ]].. tostring(usrs) ..[[
-
-
 l to j: ]].. tostring(glinks) ..[[
-
 n j ]].. tostring(join) ..[[ s
-
 l to a : ]].. tostring(wlinks) ..[[
-
 n a ]].. tostring(accept) ..[[ s
-
 s l : ]].. tostring(links)
         return send(msg.chat_id,0, text, {_ = 'textParseModeMarkdown'})
        
@@ -973,7 +962,7 @@ s l : ]].. tostring(links)
 		redis:sadd("botBOT-IDfmsg",math.ceil(tonumber(msg.reply_to_message_id)))
 		redis:set("botBOT-IDmsg"..math.ceil(tonumber(msg.reply_to_message_id)), 0)
 		redis:set("botBOT-IDfchat",math.ceil(tonumber(msg.chat_id)))
-        elseif (text:match("^([Ff]d)$") and msg.reply_to_message_id ~= 0) then
+        elseif (text:match("^([Ff]da)$") and msg.reply_to_message_id ~= 0) then
 		if redis:get('botBOT-IDautoforward') then
 		send(msg.chat_id, 0, "no " .. randomtext())
 		else 
