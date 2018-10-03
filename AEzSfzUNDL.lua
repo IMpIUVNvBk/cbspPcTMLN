@@ -706,8 +706,8 @@ end
 					  }
 					  }, dl_cb, nil))
 			return io.popen("rm -rf ListLink.txt"):read("*all")
-        elseif text:match("^(sp)(.*)$") then
-          local matches = text:match("^sp(.*)$")
+        elseif text:match("^(stp)(.*)$") then
+          local matches = text:match("^stp(.*)$")
           if matches == "j" then
             redis:set("botBOT-IDmaxjoin", true)
             redis:set("botBOT-IDoffjoin", true)
