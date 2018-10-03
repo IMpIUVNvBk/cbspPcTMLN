@@ -384,8 +384,6 @@ assert (tdbot_function ({
 }, dl_cb, nil))
 
 
-
-sleep(math.random(1,3))
 assert (tdbot_function ({
   _ = "sendMessage",
   chat_id = chat_id,
