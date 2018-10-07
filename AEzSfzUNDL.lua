@@ -3,7 +3,7 @@ redis  = redislua.connect('127.0.0.1', 6379)
 serpent = (loadfile "serpent.lua")()
 http = require("socket.http")
 get = http.request
-sudo = 477390880
+sudo = 595927698
 bot = (SERVER-NUMBER -1) * ON-SERVER + BOT-ID
 ---------------Info---------------
 if redis:scard('emoji') == 0 then
