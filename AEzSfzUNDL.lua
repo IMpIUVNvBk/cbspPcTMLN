@@ -1155,35 +1155,41 @@ local ran5 = rands(1,'. ? !')
 						  progress = 200
 						}
 						}, function (i,purya)
-							assert (tdbot_function ({
-								_ = "sendChatAction",
-								chat_id = i.chatid,
-								action = {
-									_ = "chatActionTyping",
-									progress = 200
-								}
-							}, dl_cb, nil))
 								assert (tdbot_function ({
 								_ = 'setAlarm',
-								seconds = 12
-							  }, function (i,purya)
-									  assert (tdbot_function ({
-										  _ = "sendMessage",
-										  chat_id = i.chatid,
-										  reply_to_message_id = 0,
-										  disable_notification=false,
-										  from_background=true,
-										  reply_markup=nil,
-										  input_message_content={
-											_="inputMessageText",
-											text= msgtext ,
-											disable_web_page_preview=true,
-											clear_draft=false,
-											entities={},
-											parse_mode=parse}
-										  }, dl_cb, nil))
-										  
-										  	  redis:hset('botBOT-ID',Id,"1")
+								seconds = 5
+								}, function (i,purya)
+									assert (tdbot_function ({
+										_ = "sendChatAction",
+										chat_id = i.chatid,
+										action = {
+											_ = "chatActionTyping",
+											progress = 200
+										}
+									}, function (i,purya)
+										assert (tdbot_function ({
+											_ = 'setAlarm',
+											seconds = 5
+											}, function (i,purya)
+												assert (tdbot_function ({
+													_ = "sendMessage",
+													chat_id = i.chatid,
+													reply_to_message_id = 0,
+													disable_notification=false,
+													from_background=true,
+													reply_markup=nil,
+													input_message_content={
+													_="inputMessageText",
+													text= msgtext ,
+													disable_web_page_preview=true,
+													clear_draft=false,
+													entities={},
+													parse_mode=parse}
+													}, dl_cb, nil))
+													
+															redis:hset('botBOT-ID',Id,"1")
+											end, {chatid = i.chatid,msgid = i.msgid}))
+										
 							  end, {chatid = i.chatid,msgid = i.msgid}))
 					  
 					  end, {chatid = i.chatid,msgid = i.msgid}))
