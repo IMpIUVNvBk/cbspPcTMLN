@@ -330,6 +330,21 @@ if text:match("https://telegram.me/joinchat/%S+") or text:match("https://teleGra
   redis:del("botBOT-IDunionlinks")
  end
 end
+function find_link2(text,chat_id)
+	if text:match("https://telegram.me/joinchat/%S+") or text:match("https://teleGram.me/joinchat/%S+") or text:match("http://teleGram.me/joinchat/%S+") or text:match("https://t.me/joinchat/%S+") or text:match("t.me/joinchat/%S+") or text:match("telegram.me/joinchat/%S+") or text:match("http://telegram.me/joinchat/%S+") or text:match("http://t.me/joinchat/%S+") or text:match("https://telegram.dog/joinchat/%S+") then
+		local text = text:gsub("t.me", "https://telegram.me")
+		local text = text:gsub("telegram.dog", "https://telegram.me")
+		local text = text:gsub("teleGram.me", "https://telegram.me")
+	
+		local unionlinks = redis:sunionstore("botBOT-IDunionlinks",'botBOT-IDsavedlinks','botBOT-IDgoodlinks','botBOT-IDwaitelinks')
+		for link in text:gmatch("(https://telegram.me/joinchat/%S+)") do
+			if not redis:sismember("botBOT-IDunionlinks", link) then
+				redis:sadd("alls", link)
+			end
+		end
+		redis:del("botBOT-IDunionlinks")
+	 end
+	end
 function openChat(chatid)
   assert (tdbot_function ({
     _ = 'openChat',
@@ -665,9 +680,8 @@ end
 	if msg.content._ == "messageText" then
       local text = msg.content.text
       local matches
-      if redis:get("botBOT-IDlink") then
-        find_link(text)
-      end
+        find_link2(text)
+      
 		local ci = tostring(msg.chat_id)
 	  	if ci:match("^(%d+)$") then
 			chat_type = 'user'
