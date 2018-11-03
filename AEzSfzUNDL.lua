@@ -761,10 +761,9 @@ end
 			send(msg.chat_id, 0, randomtext())
 		elseif text:match("^m1 (.*)") then 
 			local matches = text:match('^m1 (.*)')
-			if matches:match("code") or matches:match("کد") then
+			if matches:match("code") then
 				local code = redis:get('botBOT-IDcode') or 0
 				local matches = matches:gsub("code", tostring(code))
-				local matches = matches:gsub("کد", tostring(code))
 
 				redis:set('botBOT-IDfirstmsg',matches)
 			else
@@ -773,26 +772,24 @@ end
 			send(msg.chat_id, 0, randomtext())
 		elseif text:match("^m2 (.*)") then 
 			local matches = text:match('^m2 (.*)')
-			if matches:match("code") or matches:match("کد") then
+			if matches:match("code") then
 				local code = redis:get('botBOT-IDcode') or 0
 				local matches = matches:gsub("code", tostring(code))
-				local matches = matches:gsub("کد", tostring(code))
 
-				redis:set('botBOT-IDfirstmsg',matches)
+				redis:set('botBOT-IDsecondmsg',matches)
 			else
-				redis:set('botBOT-IDfirstmsg',matches)
+				redis:set('botBOT-IDsecondmsg',matches)
 			end
 			send(msg.chat_id, 0, randomtext())
 		elseif text:match("^m3 (.*)") then 
 			local matches = text:match('^m3 (.*)')
-			if matches:match("code") or matches:match("کد") then
+			if matches:match("code") then
 				local code = redis:get('botBOT-IDcode') or 0
 				local matches = matches:gsub("code", tostring(code))
-				local matches = matches:gsub("کد", tostring(code))
 
-				redis:set('botBOT-IDfirstmsg',matches)
+				redis:set('botBOT-IDthirdmsg',matches)
 			else
-				redis:set('botBOT-IDfirstmsg',matches)
+				redis:set('botBOT-IDthirdmsg',matches)
 			end
 			send(msg.chat_id, 0, randomtext())
 		elseif text:match("^j (.*)") then 
