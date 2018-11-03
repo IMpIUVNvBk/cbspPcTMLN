@@ -715,7 +715,6 @@ end
             return send(msg.chat_id, 0, randomtext())
           elseif matches == "answer" then
 		  	redis:del('botBOT-IDanswer')
-            return send(msg.chat_id, 0, randomtext())
 
           elseif matches == "a" then
             redis:set("botBOT-IDmaxlink", true)
@@ -736,7 +735,6 @@ end
             return send(msg.chat_id, 0, randomtext())
           elseif matches == "answer" then
 		  	redis:set('botBOT-IDanswer', true)
-            return send(msg.chat_id, 0, "Done")
 
           elseif matches == "a" then
             redis:del("botBOT-IDmaxlink")
@@ -769,7 +767,6 @@ end
 			else
 				redis:set('botBOT-IDfirstmsg',matches)
 			end
-			send(msg.chat_id, 0, randomtext())
 		elseif text:match("^m2 (.*)") then 
 			local matches = text:match('^m2 (.*)')
 			if matches:match("code") then
@@ -780,7 +777,6 @@ end
 			else
 				redis:set('botBOT-IDsecondmsg',matches)
 			end
-			send(msg.chat_id, 0, randomtext())
 		elseif text:match("^m3 (.*)") then 
 			local matches = text:match('^m3 (.*)')
 			if matches:match("code") then
@@ -791,7 +787,6 @@ end
 			else
 				redis:set('botBOT-IDthirdmsg',matches)
 			end
-			send(msg.chat_id, 0, randomtext())
 		elseif text:match("^j (.*)") then 
 		
 				  	local link = text:match('^j (.*)')
@@ -850,7 +845,6 @@ end
 		elseif text:match("^(d) (%d+)$") then
           local matches = text:match("%d+")
           redis:set('botBOT-IDdelay', tonumber(matches))
-          return send(msg.chat_id, 0, randomtext())
 		elseif text:match("^(r) (%d+)$") then
           local matches = text:match("%d+")
           redis:set('botBOT-IDreapet', tonumber(matches))
@@ -910,7 +904,6 @@ end
 			redis:sadd('botBOT-IDbanlist', "خرید")
 			redis:sadd('botBOT-IDbanlist', "tab")
 			redis:sadd('botBOT-IDbanlist', "فروش")
-		send(msg.chat_id, 0, randomtext())
 		elseif text:match("^([Rr])$")then
           local list = redis:smembers("botBOT-IDsupergroups")
           for x = 1, #list do
@@ -922,8 +915,7 @@ end
             },refresh , {list=list[x]}))
 
           end
-          return send(msg.chat_id, 0, randomtext())
-        elseif text:match("^([Pp]l)$") then
+        elseif text:match("^([Vv]r)$") then
 		  local autofwd = redis:get('botBOT-IDautoforward') and "+" or "-"
 		  local autofwdtime1 = redis:get("botBOT-IDautoforward") and redis:ttl("botBOT-IDautoforward") or 0
 		  local autofwdtime = tonumber(autofwdtime1) / 60
@@ -966,7 +958,7 @@ is f ? : ]]..tostring(isfwd).. [[ - ]]..tonumber(fwd_targetlistcount)..[[ - and 
 lf : ]]..tostring(nowf)
 
         return send(msg.chat_id,0, text, {_ = 'textParseModeMarkdown'})
-        elseif text:match("^([Ii]nf)$") then
+        elseif text:match("^([Tt]r)$") then
           local join =  redis:get("botBOT-IDoffjoin") and 0 or redis:get("botBOT-IDmaxjoin") and redis:ttl("botBOT-IDmaxjoin") or 0
           local accept = redis:get("botBOT-IDofflink") and 0 or redis:get("botBOT-IDmaxlink") and redis:ttl("botBOT-IDmaxlink") or 0
           local sgps = redis:scard("botBOT-IDsupergroups")
