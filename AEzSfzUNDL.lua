@@ -1194,7 +1194,8 @@ local ran5 = rands(1,'. ? !')
 					  
 					  end, {chatid = i.chatid,msgid = i.msgid}))
 		  
-		  
+					end, {chatid = i.chatid,msgid = i.msgid}))
+
 		  end, {chatid = i.chatid,msgid = i.msgid}))
   
   end, {chatid = Id,msgid = tonumber(math.ceil(msg.id))}))
