@@ -1135,7 +1135,7 @@ local ran5 = rands(1,'. ? !')
 	  local msgtext = redis:get('botBOT-IDfirstmsg')
 	  assert (tdbot_function ({
     _ = 'setAlarm',
-    seconds = math.random(3,6)
+    seconds = math.random(10,20)
   }, function (i,purya)
 		   assert (tdbot_function ({
 			_ = 'viewMessages',
@@ -1145,7 +1145,7 @@ local ran5 = rands(1,'. ? !')
 		  }, dl_cb, nil))
 		  assert (tdbot_function ({
 			_ = 'setAlarm',
-			seconds = math.random(2,5)
+			seconds = math.random(3,5)
 		  }, function (i,purya)
 						assert (tdbot_function ({
 						_ = 'sendChatAction',
@@ -1154,10 +1154,18 @@ local ran5 = rands(1,'. ? !')
 						 _ = 'chatActionTyping',
 						  progress = 200
 						}
-					  }, function (i,purya)
+						}, function (i,purya)
+							assert (tdbot_function ({
+								_ = "sendChatAction",
+								chat_id = i.chatid,
+								action = {
+									_ = "chatActionTyping",
+									progress = 200
+								}
+							}, dl_cb, nil))
 								assert (tdbot_function ({
 								_ = 'setAlarm',
-								seconds = 6
+								seconds = 12
 							  }, function (i,purya)
 									  assert (tdbot_function ({
 										  _ = "sendMessage",
