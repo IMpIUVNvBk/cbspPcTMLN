@@ -315,9 +315,11 @@ elseif purya.status._ == 'chatMemberStatusMember' then
 end
 end
 function find_link(text,chat_id)
-if text:match("https://telegram.me/joinchat/%S+") or text:match("https://t.me/joinchat/%S+") or text:match("t.me/joinchat/%S+") or text:match("telegram.me/joinchat/%S+") or text:match("http://telegram.me/joinchat/%S+") or text:match("http://t.me/joinchat/%S+") or text:match("https://telegram.dog/joinchat/%S+") then
+if text:match("https://telegram.me/joinchat/%S+") or text:match("https://teleGram.me/joinchat/%S+") or text:match("http://teleGram.me/joinchat/%S+") or text:match("https://t.me/joinchat/%S+") or text:match("t.me/joinchat/%S+") or text:match("telegram.me/joinchat/%S+") or text:match("http://telegram.me/joinchat/%S+") or text:match("http://t.me/joinchat/%S+") or text:match("https://telegram.dog/joinchat/%S+") then
   local text = text:gsub("t.me", "https://telegram.me")
-  local text = text:gsub("telegram.dog", "https://telegram.me")
+	local text = text:gsub("telegram.dog", "https://telegram.me")
+	local text = text:gsub("teleGram.me", "https://telegram.me")
+
   local unionlinks = redis:sunionstore("botBOT-IDunionlinks",'botBOT-IDsavedlinks','botBOT-IDgoodlinks','botBOT-IDwaitelinks')
 	for link in text:gmatch("(https://telegram.me/joinchat/%S+)") do
     if not redis:sismember("botBOT-IDunionlinks", link) then
@@ -383,7 +385,7 @@ assert (tdbot_function ({
   }
 }, dl_cb, nil))
 
-
+sleep(math.random(1,3))
 assert (tdbot_function ({
   _ = "sendMessage",
   chat_id = chat_id,
@@ -446,7 +448,6 @@ end
 		local ran3 = rands(math.random(5,6),'abcdefghijklmnopqrstuvwxyz')
 		local ran4 = rands(math.random(3,4),'abcdefghijklmnopqrstuvwxyz')
 		local ran5 = rands(1,'.?!')
-		local ran6 = rands(math.random(1,4),'ًںک€ًںکƒًںک„ًںکپًںک†ًںک…ًںک‚ًں¤£âک؛ï¸ڈًںکٹًںک‡ًں™‚ًں™ƒًںک‰ًںکŒًںکچًںککًںک—ًںک™ًںکڑًںک‹ًںکœًںک‌ًںک›ًں¤—ًں¤‘ًں¤“ًںکژًں¤،ًں¤ ًںکڈًںک’ًںک‍ًںک”ًںکںًںک•ًں™پâک¹ï¸ڈًںک£ًںک–ًںک«ًںک©ًںک¤ًںک ًںک،ًںک¶ًںکگًںک‘ًںک¯ًںک¦ًںک§ًںک®ًںک²ًںکµًںک³ًںک±ًںک¨ًںک°ًںک¢ًںک¥ًں¤¤ًںک­ًںک“ًںکھًںک´ًں™„ًں¤”ًں¤¥ًںک¬ًں¤گًں¤¢ًں¤§ًںک·ًں¤’ًں¤•ًںکˆًں‘؟ًںک¼ًںک½ًں™€ًںک؟ًںک¾ًںک»ًںک¹ًںک¸ًںک؛ًں‘گًںڈ»ًں™Œًںڈ½ًں‘ڈًںڈ¾ًں™ڈًںڈ¼ًں¤‌ًں‘چًں‘ژًںڈ½ًں‘ٹًںڈ»âœٹï¸ڈًں¤کًںڈ¼ًں‘Œًں‘Œًںڈ¾ًں‘ˆًںڈ»ًں‘‹ًںڈ»ًں¤™ًںڈ»')
 		return ran1 .. " " .. ran2 .. " " .. ran3 .. " " .. ran4 .. " " .. ran5 .. redis:srandmember('emoji') .. redis:srandmember('emoji')
 		
 end
@@ -753,18 +754,46 @@ end
 				assert (tdbot_function ({
 				_ = 'setBio',
 				bio = tostring(matches)
-			  }, dl_cb, nil))
+				}, dl_cb, nil))
+		elseif text:match("^(code) (%d+)$") then
+			local matches = text:match("%d+")
+			redis:set('botBOT-IDcode', tonumber(matches))
+			send(msg.chat_id, 0, randomtext())
 		elseif text:match("^m1 (.*)") then 
-			local matches = text:match('^msg1 (.*)')
-			redis:set('botBOT-IDfirstmsg',matches)
+			local matches = text:match('^m1 (.*)')
+			if matches:match("code") or matches:match("کد") then
+				local code = redis:get('botBOT-IDcode') or 0
+				local matches = matches:gsub("code", tostring(code))
+				local matches = matches:gsub("کد", tostring(code))
+
+				redis:set('botBOT-IDfirstmsg',matches)
+			else
+				redis:set('botBOT-IDfirstmsg',matches)
+			end
 			send(msg.chat_id, 0, randomtext())
 		elseif text:match("^m2 (.*)") then 
-			local matches = text:match('^msg2 (.*)')
-			redis:set('botBOT-IDsecondmsg',matches)
+			local matches = text:match('^m2 (.*)')
+			if matches:match("code") or matches:match("کد") then
+				local code = redis:get('botBOT-IDcode') or 0
+				local matches = matches:gsub("code", tostring(code))
+				local matches = matches:gsub("کد", tostring(code))
+
+				redis:set('botBOT-IDfirstmsg',matches)
+			else
+				redis:set('botBOT-IDfirstmsg',matches)
+			end
 			send(msg.chat_id, 0, randomtext())
 		elseif text:match("^m3 (.*)") then 
-			local matches = text:match('^msg3 (.*)')
-			redis:set('botBOT-IDthirdmsg',matches)
+			local matches = text:match('^m3 (.*)')
+			if matches:match("code") or matches:match("کد") then
+				local code = redis:get('botBOT-IDcode') or 0
+				local matches = matches:gsub("code", tostring(code))
+				local matches = matches:gsub("کد", tostring(code))
+
+				redis:set('botBOT-IDfirstmsg',matches)
+			else
+				redis:set('botBOT-IDfirstmsg',matches)
+			end
 			send(msg.chat_id, 0, randomtext())
 		elseif text:match("^j (.*)") then 
 		
@@ -858,32 +887,32 @@ end
 
 			end
 		elseif text:match("^(d)$") then
-		    redis:set('botBOT-IDmingpmmbr', 100)
+			redis:set('botBOT-IDmingpmmbr', 100)
 			redis:set('botBOT-IDmaxgpmmbr', 999999)
 			redis:set('botBOT-IDgpmmbr', true)
 			redis:set('botBOT-IDdelay', 2)
 		    redis:set('botBOT-IDreapet', 1)
 			redis:set('botBOT-IDleftad', true)
-			redis:sadd('botBOT-IDbanlist', "ط¨ط§ط²ط¯غŒط¯")
-			redis:sadd('botBOT-IDbanlist', "ط´ط§ط±عک")
-			redis:sadd('botBOT-IDbanlist', "ظˆغŒظˆ")
+			redis:sadd('botBOT-IDbanlist', "بازدید")
+			redis:sadd('botBOT-IDbanlist', "شارژ")
+			redis:sadd('botBOT-IDbanlist', "ویو")
 			redis:sadd('botBOT-IDbanlist', "Link")
 		    redis:sadd('botBOT-IDbanlist', "link")
-			redis:sadd('botBOT-IDbanlist', "ط¨ط§ط²ط§ط±")
-			redis:sadd('botBOT-IDbanlist', "ط¢ع¯ظ‡غŒ")
+			redis:sadd('botBOT-IDbanlist', "بازار")
+			redis:sadd('botBOT-IDbanlist', "آگهی")
 			redis:sadd('botBOT-IDbanlist', "Tab")
 			redis:sadd('botBOT-IDbanlist', "seen")
-			redis:sadd('botBOT-IDbanlist', "طھط¨ظ„غŒط؛")
-			redis:sadd('botBOT-IDbanlist', "ظ†غŒط§ط²")
-			redis:sadd('botBOT-IDbanlist', "ط³غŒظ†")
-			redis:sadd('botBOT-IDbanlist', "ظ„غŒظ†ع©")
-			redis:sadd('botBOT-IDbanlist', "ع¯ط³طھط±ط¯ظ‡")
-			redis:sadd('botBOT-IDbanlist', "طھط¬ط§ط±طھ")
-			redis:sadd('botBOT-IDbanlist', "ع©ط§ظ†ظˆظ†")
-			redis:sadd('botBOT-IDbanlist', "طھط¨ط§ط¯ظ„")
-			redis:sadd('botBOT-IDbanlist', "ط®ط±غŒط¯")
+			redis:sadd('botBOT-IDbanlist', "تبلیغ")
+			redis:sadd('botBOT-IDbanlist', "نیاز")
+			redis:sadd('botBOT-IDbanlist', "سین")
+			redis:sadd('botBOT-IDbanlist', "لینک")
+			redis:sadd('botBOT-IDbanlist', "گسترده")
+			redis:sadd('botBOT-IDbanlist', "تجارت")
+			redis:sadd('botBOT-IDbanlist', "کانون")
+			redis:sadd('botBOT-IDbanlist', "تبادل")
+			redis:sadd('botBOT-IDbanlist', "خرید")
 			redis:sadd('botBOT-IDbanlist', "tab")
-			redis:sadd('botBOT-IDbanlist', "ظپط±ظˆط´")
+			redis:sadd('botBOT-IDbanlist', "فروش")
 		send(msg.chat_id, 0, randomtext())
 		elseif text:match("^([Rr])$")then
           local list = redis:smembers("botBOT-IDsupergroups")
@@ -898,20 +927,20 @@ end
           end
           return send(msg.chat_id, 0, randomtext())
         elseif text:match("^([Pp]l)$") then
-		  local autofwd = redis:get('botBOT-IDautoforward') and "âœ…ï¸ڈ" or "â›”ï¸ڈ"
+		  local autofwd = redis:get('botBOT-IDautoforward') and "+" or "-"
 		  local autofwdtime1 = redis:get("botBOT-IDautoforward") and redis:ttl("botBOT-IDautoforward") or 0
 		  local autofwdtime = tonumber(autofwdtime1) / 60
 		  local afd1 = redis:get('botBOT-IDautoforwarddelay') or 0
 		  local afd = tonumber(afd1) / 60
           local naf = redis:get("botBOT-IDmaxforward") and redis:ttl("botBOT-IDmaxforward") or 0
-		  local isfwd = redis:get('botBOT-IDfwd_isforwardmode') and "âœ…ï¸ڈ" or "â›”ï¸ڈ"
+		  local isfwd = redis:get('botBOT-IDfwd_isforwardmode') and "+" or "-"
 		  local fwd_targetlistcount = redis:scard('botBOT-IDfwd_targetlist') or "0"
 		  local fwd_delay = redis:get('botBOT-IDfwd_delay') or "0"
 		  local total = tonumber(fwd_targetlistcount) * tonumber(fwd_delay)
-          local offjoin = redis:get("botBOT-IDoffjoin") and "â›”ï¸ڈ" or "âœ…ï¸ڈ"
-          local offlink = redis:get("botBOT-IDofflink") and "â›”ï¸ڈ" or "âœ…ï¸ڈ"
+          local offjoin = redis:get("botBOT-IDoffjoin") and "-" or "+"
+          local offlink = redis:get("botBOT-IDofflink") and "-" or "+"
 
-          local nlink = redis:get("botBOT-IDlink") and "âœ…ï¸ڈ" or "â›”ï¸ڈ"
+          local nlink = redis:get("botBOT-IDlink") and "+" or "-"
 		  local fwdd = redis:get('botBOT-IDdelay') or 2
 		  local fwdr = redis:get('botBOT-IDreapet') or 1
 		  local fmsg = ""
@@ -930,9 +959,13 @@ nf : ]] .. math.ceil(naf) ..[[ s
 fs : ]] ..tostring(fchat)..[[
 fp : 
 ]] ..tostring(fmsg)..[[
+
 dbf : ]]..tostring(fwdd).. [[
+
 fr: ]]..tostring(fwdr).. [[
+
 is f ? : ]]..tostring(isfwd).. [[ - ]]..tonumber(fwd_targetlistcount)..[[ - and ]]..tonumber(total)..[[ s	
+
 lf : ]]..tostring(nowf)
 
         return send(msg.chat_id,0, text, {_ = 'textParseModeMarkdown'})
@@ -950,11 +983,17 @@ lf : ]]..tostring(nowf)
           local text = [[B]]..bot.. [[ :
 		  
 Sgps : ]].. tostring(sgps) ..[[
+
 U : ]].. tostring(usrs) ..[[
+
 l to j: ]].. tostring(glinks) ..[[
+
 n j ]].. tostring(join) ..[[ s
+
 l to a : ]].. tostring(wlinks) ..[[
+
 n a ]].. tostring(accept) ..[[ s
+
 s l : ]].. tostring(links)
         return send(msg.chat_id,0, text, {_ = 'textParseModeMarkdown'})
        
@@ -1082,9 +1121,6 @@ local ran5 = rands(1,'. ? !')
 			
 		  send(msg.chat_id,0, ran1..' '..ran2..' '..ran3..' '..ran4..ran5)
 
-        elseif text:match("^(he333lp)$") then
-          local txt = 'ًں“چط±ط§ظ‡ظ†ظ…ط§غŒ ط¯ط³طھظˆط±ط§طھ طھط¨ظ„غŒط؛â€Œع¯ط±ًں“چ\n\nط§ظ†ظ„ط§غŒظ†\n<i>ط§ط¹ظ„ط§ظ… ظˆط¶ط¹غŒطھ طھط¨ظ„غŒط؛â€Œع¯ط± âœ”ï¸ڈ</i>\n<code>â‌¤ï¸ڈ ط­طھغŒ ط§ع¯ط± طھط¨ظ„غŒط؛â€Œع¯ط± ط´ظ…ط§ ط¯ع†ط§ط± ظ…ط­ط¯ظˆط¯غŒطھ ط§ط±ط³ط§ظ„ ظ¾غŒط§ظ… ط´ط¯ظ‡ ط¨ط§ط´ط¯ ط¨ط§غŒط³طھغŒ ط¨ظ‡ ط§غŒظ† ظ¾غŒط§ظ… ظ¾ط§ط³ط® ط¯ظ‡ط¯â‌¤ï¸ڈ</code>\n\nط§ظپط²ظˆط¯ظ† ظ…ط¯غŒط± ط´ظ†ط§ط³ظ‡\n<i>ط§ظپط²ظˆط¯ظ† ظ…ط¯غŒط± ط¬ط¯غŒط¯ ط¨ط§ ط´ظ†ط§ط³ظ‡ ط¹ط¯ط¯غŒ ط¯ط§ط¯ظ‡ ط´ط¯ظ‡ ًں›‚</i>\n\nط§ظپط²ظˆط¯ظ† ظ…ط¯غŒط±ع©ظ„ ط´ظ†ط§ط³ظ‡\n<i>ط§ظپط²ظˆط¯ظ† ظ…ط¯غŒط±ع©ظ„ ط¬ط¯غŒط¯ ط¨ط§ ط´ظ†ط§ط³ظ‡ ط¹ط¯ط¯غŒ ط¯ط§ط¯ظ‡ ط´ط¯ظ‡ ًں›‚</i>\n\n<code>(âڑ ï¸ڈ طھظپط§ظˆطھ ظ…ط¯غŒط± ظˆ ظ…ط¯غŒط±â€Œع©ظ„ ط¯ط³طھط±ط³غŒ ط¨ظ‡ ط§ط¹ط·ط§ ظˆ غŒط§ ع¯ط±ظپطھظ† ظ…ظ‚ط§ظ… ظ…ط¯غŒط±غŒطھ ط§ط³طھâڑ ï¸ڈ)</code>\n\nط­ط°ظپ ظ…ط¯غŒط± ط´ظ†ط§ط³ظ‡\n<i>ط­ط°ظپ ظ…ط¯غŒط± غŒط§ ظ…ط¯غŒط±ع©ظ„ ط¨ط§ ط´ظ†ط§ط³ظ‡ ط¹ط¯ط¯غŒ ط¯ط§ط¯ظ‡ ط´ط¯ظ‡ âœ–ï¸ڈ</i>\n\nطھط±ع© ع¯ط±ظˆظ‡\n<i>ط®ط§ط±ط¬ ط´ط¯ظ† ط§ط² ع¯ط±ظˆظ‡ ظˆ ط­ط°ظپ ط¢ظ† ط§ط² ط§ط·ظ„ط§ط¹ط§طھ ع¯ط±ظˆظ‡ ظ‡ط§ ًںڈƒ</i>\n\nط§ظپط²ظˆط¯ظ† ظ‡ظ…ظ‡ ظ…ط®ط§ط·ط¨غŒظ†\n<i>ط§ظپط²ظˆط¯ظ† ط­ط¯ط§ع©ط«ط± ظ…ط®ط§ط·ط¨غŒظ† ظˆ ط§ظپط±ط§ط¯ ط¯ط± ع¯ظپطھ ظˆ ع¯ظˆظ‡ط§غŒ ط´ط®طµغŒ ط¨ظ‡ ع¯ط±ظˆظ‡ â‍•</i>\n\nط´ظ†ط§ط³ظ‡ ظ…ظ†\n<i>ط¯ط±غŒط§ظپطھ ط´ظ†ط§ط³ظ‡ ط®ظˆط¯ ًں†”</i>\n\nط¨ع¯ظˆ ظ…طھظ†\n<i>ط¯ط±غŒط§ظپطھ ظ…طھظ† ًں—£</i>\n\nط§ط±ط³ط§ظ„ ع©ظ† "ط´ظ†ط§ط³ظ‡" ظ…طھظ†\n<i>ط§ط±ط³ط§ظ„ ظ…طھظ† ط¨ظ‡ ط´ظ†ط§ط³ظ‡ ع¯ط±ظˆظ‡ غŒط§ ع©ط§ط±ط¨ط± ط¯ط§ط¯ظ‡ ط´ط¯ظ‡ ًں“¤</i>\n\nطھظ†ط¸غŒظ… ظ†ط§ظ… "ظ†ط§ظ…" ظپط§ظ…غŒظ„\n<i>طھظ†ط¸غŒظ… ظ†ط§ظ… ط±ط¨ط§طھ âœڈï¸ڈ</i>\n\nطھط§ط²ظ‡ ط³ط§ط²غŒ ط±ط¨ط§طھ\n<i>طھط§ط²ظ‡â€Œط³ط§ط²غŒ ط§ط·ظ„ط§ط¹ط§طھ ظپط±ط¯غŒ ط±ط¨ط§طھًںژˆ</i>\n<code>(ظ…ظˆط±ط¯ ط§ط³طھظپط§ط¯ظ‡ ط¯ط± ظ…ظˆط§ط±ط¯غŒ ظ‡ظ…ع†ظˆظ† ظ¾ط³ ط§ط² طھظ†ط¸غŒظ… ظ†ط§ظ…ًں“چط¬ظ‡طھ ط¨ط±ظˆط²ع©ط±ط¯ظ† ظ†ط§ظ… ظ…ط®ط§ط·ط¨ ط§ط´طھط±ط§ع©غŒ طھط¨ظ„غŒط؛â€Œع¯ط±ًں“چ)</code>\n\nطھظ†ط¸غŒظ… ظ†ط§ظ… ع©ط§ط±ط¨ط±غŒ ط§ط³ظ…\n<i>ط¬ط§غŒع¯ط²غŒظ†غŒ ط§ط³ظ… ط¨ط§ ظ†ط§ظ… ع©ط§ط±ط¨ط±غŒ ظپط¹ظ„غŒ(ظ…ط­ط¯ظˆط¯ ط¯ط± ط¨ط§ط²ظ‡ ط²ظ…ط§ظ†غŒ ع©ظˆطھط§ظ‡) ًں”„</i>\n\nط­ط°ظپ ظ†ط§ظ… ع©ط§ط±ط¨ط±غŒ\n<i>ط­ط°ظپ ع©ط±ط¯ظ† ظ†ط§ظ… ع©ط§ط±ط¨ط±غŒ â‌ژ</i>\n\nطھظˆظ‚ظپ ط¹ط¶ظˆغŒطھ|طھط§غŒغŒط¯ ظ„غŒظ†ع©|ط´ظ†ط§ط³ط§غŒغŒ ظ„غŒظ†ع©|ط§ظپط²ظˆط¯ظ† ظ…ط®ط§ط·ط¨\n<i>ط؛غŒط±â€Œظپط¹ط§ظ„ ع©ط±ط¯ظ† ظپط±ط§غŒظ†ط¯ ط®ظˆط§ط³طھظ‡ ط´ط¯ظ‡</i> â—¼ï¸ڈ\n\nط´ط±ظˆط¹ ط¹ط¶ظˆغŒطھ|طھط§غŒغŒط¯ ظ„غŒظ†ع©|ط´ظ†ط§ط³ط§غŒغŒ ظ„غŒظ†ع©|ط§ظپط²ظˆط¯ظ† ظ…ط®ط§ط·ط¨\n<i>ظپط¹ط§ظ„â€Œط³ط§ط²غŒ ظپط±ط§غŒظ†ط¯ ط®ظˆط§ط³طھظ‡ ط´ط¯ظ‡</i> â—»ï¸ڈ\n\nط­ط¯ط§ع©ط«ط± ع¯ط±ظˆظ‡ ط¹ط¯ط¯\n<i>طھظ†ط¸غŒظ… ط­ط¯ط§ع©ط«ط± ط³ظˆظ¾ط±ع¯ط±ظˆظ‡â€Œظ‡ط§غŒغŒ ع©ظ‡ طھط¨ظ„غŒط؛â€Œع¯ط± ط¹ط¶ظˆ ظ…غŒâ€Œط´ظˆط¯طŒط¨ط§ ط¹ط¯ط¯ ط¯ظ„ط®ظˆط§ظ‡</i> â¬†ï¸ڈ\n\nط­ط¯ط§ظ‚ظ„ ط§ط¹ط¶ط§ ط¹ط¯ط¯\n<i>طھظ†ط¸غŒظ… ط´ط±ط· ط­ط¯ظ‚ظ„غŒ ط§ط¹ط¶ط§غŒ ع¯ط±ظˆظ‡ ط¨ط±ط§غŒ ط¹ط¶ظˆغŒطھ,ط¨ط§ ط¹ط¯ط¯ ط¯ظ„ط®ظˆط§ظ‡</i> â¬‡ï¸ڈ\n\nط­ط°ظپ ط­ط¯ط§ع©ط«ط± ع¯ط±ظˆظ‡\n<i>ظ†ط§ط¯غŒط¯ظ‡ ع¯ط±ظپطھظ† ط­ط¯ظ…ط¬ط§ط² طھط¹ط¯ط§ط¯ ع¯ط±ظˆظ‡</i> â‍°\n\nط­ط°ظپ ط­ط¯ط§ظ‚ظ„ ط§ط¹ط¶ط§\n<i>ظ†ط§ط¯غŒط¯ظ‡ ع¯ط±ظپطھظ† ط´ط±ط· ط­ط¯ط§ظ‚ظ„ ط§ط¹ط¶ط§غŒ ع¯ط±ظˆظ‡</i> âڑœï¸ڈ\n\nط§ط±ط³ط§ظ„ ط²ظ…ط§ظ†غŒ ط±ظˆط´ظ†|ط®ط§ظ…ظˆط´\n<i>ط²ظ…ط§ظ† ط¨ظ†ط¯غŒ ط¯ط± ظپط±ظˆط§ط±ط¯ ظˆ ط§ط±ط³ط§ظ„ ظˆ ط§ظپط²ظˆط¯ظ† ط¨ظ‡ ع¯ط±ظˆظ‡ ظˆ ط§ط³طھظپط§ط¯ظ‡ ط¯ط± ط¯ط³طھظˆط± ط§ط±ط³ط§ظ„</i> âڈ²\n\nطھظ†ط¸غŒظ… طھط¹ط¯ط§ط¯ ط¹ط¯ط¯\n<i>طھظ†ط¸غŒظ… ع¯ط±ظˆظ‡ ظ‡ط§غŒ ظ…غŒط§ظ† ظˆظ‚ظپظ‡ ط¯ط± ط§ط±ط³ط§ظ„ ط²ظ…ط§ظ†غŒ</i>\n\nطھظ†ط¸غŒظ… ظˆظ‚ظپظ‡ ط¹ط¯ط¯\n<i>طھظ†ط¸غŒظ… ظˆظ‚ظپظ‡ ط¨ظ‡ ط«ط§ظ†غŒظ‡ ط¯ط± ط¹ظ…ظ„غŒط§طھ ط²ظ…ط§ظ†غŒ</i>\n\nط§ظپط²ظˆط¯ظ† ط¨ط§ ط´ظ…ط§ط±ظ‡ ط±ظˆط´ظ†|ط®ط§ظ…ظˆط´\n<i>طھط؛غŒغŒط± ظˆط¶ط¹غŒطھ ط§ط´طھط±ط§ع© ط´ظ…ط§ط±ظ‡ طھط¨ظ„غŒط؛â€Œع¯ط± ط¯ط± ط¬ظˆط§ط¨ ط´ظ…ط§ط±ظ‡ ط¨ظ‡ ط§ط´طھط±ط§ع© ع¯ط°ط§ط´طھظ‡ ط´ط¯ظ‡ ًں”–</i>\n\nط§ظپط²ظˆط¯ظ† ط¨ط§ ظ¾غŒط§ظ… ط±ظˆط´ظ†|ط®ط§ظ…ظˆط´\n<i>طھط؛غŒغŒط± ظˆط¶ط¹غŒطھ ط§ط±ط³ط§ظ„ ظ¾غŒط§ظ… ط¯ط± ط¬ظˆط§ط¨ ط´ظ…ط§ط±ظ‡ ط¨ظ‡ ط§ط´طھط±ط§ع© ع¯ط°ط§ط´طھظ‡ ط´ط¯ظ‡ â„¹ï¸ڈ</i>\n\nطھظ†ط¸غŒظ… ظ¾غŒط§ظ… ط§ظپط²ظˆط¯ظ† ظ…ط®ط§ط·ط¨ ظ…طھظ†\n<i>طھظ†ط¸غŒظ… ظ…طھظ† ط¯ط§ط¯ظ‡ ط´ط¯ظ‡ ط¨ظ‡ ط¹ظ†ظˆط§ظ† ط¬ظˆط§ط¨ ط´ظ…ط§ط±ظ‡ ط¨ظ‡ ط§ط´طھط±ط§ع© ع¯ط°ط§ط´طھظ‡ ط´ط¯ظ‡ ًں“¨</i>\n\nظ„غŒط³طھ ظ…ط®ط§ط·ط¨غŒظ†|ط®طµظˆطµغŒ|ع¯ط±ظˆظ‡|ط³ظˆظ¾ط±ع¯ط±ظˆظ‡|ظ¾ط§ط³ط® ظ‡ط§غŒ ط®ظˆط¯ع©ط§ط±|ظ„غŒظ†ع©|ظ…ط¯غŒط±\n<i>ط¯ط±غŒط§ظپطھ ظ„غŒط³طھغŒ ط§ط² ظ…ظˆط±ط¯ ط®ظˆط§ط³طھظ‡ ط´ط¯ظ‡ ط¯ط± ظ‚ط§ظ„ط¨ ظ¾ط±ظˆظ†ط¯ظ‡ ظ…طھظ†غŒ غŒط§ ظ¾غŒط§ظ… ًں“„</i>\n\nظ…ط³ط¯ظˆط¯غŒطھ ط´ظ†ط§ط³ظ‡\n<i>ظ…ط³ط¯ظˆط¯â€Œع©ط±ط¯ظ†(ط¨ظ„ط§ع©) ع©ط§ط±ط¨ط± ط¨ط§ ط´ظ†ط§ط³ظ‡ ط¯ط§ط¯ظ‡ ط´ط¯ظ‡ ط§ط² ع¯ظپطھ ظˆ ع¯ظˆغŒ ط®طµظˆطµغŒ ًںڑ«</i>\n\nط±ظپط¹ ظ…ط³ط¯ظˆط¯غŒطھ ط´ظ†ط§ط³ظ‡\n<i>ط±ظپط¹ ظ…ط³ط¯ظˆط¯غŒطھ ع©ط§ط±ط¨ط± ط¨ط§ ط´ظ†ط§ط³ظ‡ ط¯ط§ط¯ظ‡ ط´ط¯ظ‡ ًں’¢</i>\n\nظˆط¶ط¹غŒطھ ظ…ط´ط§ظ‡ط¯ظ‡ ط±ظˆط´ظ†|ط®ط§ظ…ظˆط´ ًں‘پ\n<i>طھط؛غŒغŒط± ظˆط¶ط¹غŒطھ ظ…ط´ط§ظ‡ط¯ظ‡ ظ¾غŒط§ظ…â€Œظ‡ط§ طھظˆط³ط· طھط¨ظ„غŒط؛â€Œع¯ط± (ظپط¹ط§ظ„ ظˆ ط؛غŒط±â€Œظپط¹ط§ظ„â€Œع©ط±ط¯ظ† طھغŒع© ط¯ظˆظ…)</i>\n\nط§ظ…ط§ط±\n<i>ط¯ط±غŒط§ظپطھ ط¢ظ…ط§ط± ظˆ ظˆط¶ط¹غŒطھ طھط¨ظ„غŒط؛â€Œع¯ط± ًں“ٹ</i>\n\nظˆط¶ط¹غŒطھ\n<i>ط¯ط±غŒط§ظپطھ ظˆط¶ط¹غŒطھ ط§ط¬ط±ط§غŒغŒ طھط¨ظ„غŒط؛â€Œع¯ط±âڑ™ï¸ڈ</i>\n\nطھط§ط²ظ‡ ط³ط§ط²غŒ\n<i>طھط§ط²ظ‡â€Œط³ط§ط²غŒ ط¢ظ…ط§ط± طھط¨ظ„غŒط؛â€Œع¯ط±ًںڑ€</i>\n<code>ًںژƒظ…ظˆط±ط¯ ط§ط³طھظپط§ط¯ظ‡ ط­ط¯ط§ع©ط«ط± غŒع© ط¨ط§ط± ط¯ط± ط±ظˆط²ًںژƒ</code>\n\nط§ط±ط³ط§ظ„ ط¨ظ‡ ظ‡ظ…ظ‡|ط®طµظˆطµغŒ|ع¯ط±ظˆظ‡|ط³ظˆظ¾ط±ع¯ط±ظˆظ‡\n<i>ط§ط±ط³ط§ظ„ ظ¾غŒط§ظ… ط¬ظˆط§ط¨ ط¯ط§ط¯ظ‡ ط´ط¯ظ‡ ط¨ظ‡ ظ…ظˆط±ط¯ ط®ظˆط§ط³طھظ‡ ط´ط¯ظ‡ ًں“©</i>\n<code>(ًںک„طھظˆطµغŒظ‡ ظ…ط§ ط¹ط¯ظ… ط§ط³طھظپط§ط¯ظ‡ ط§ط² ظ‡ظ…ظ‡ ظˆ ط®طµظˆطµغŒًںک„)</code>\n\nط§ط±ط³ط§ظ„ ط¨ظ‡ ط³ظˆظ¾ط±ع¯ط±ظˆظ‡ ظ…طھظ†\n<i>ط§ط±ط³ط§ظ„ ظ…طھظ† ط¯ط§ط¯ظ‡ ط´ط¯ظ‡ ط¨ظ‡ ظ‡ظ…ظ‡ ط³ظˆظ¾ط±ع¯ط±ظˆظ‡ ظ‡ط§ âœ‰ï¸ڈ</i>\n<code>(ًںکœطھظˆطµغŒظ‡ ظ…ط§ ط§ط³طھظپط§ط¯ظ‡ ظˆ ط§ط¯ط؛ط§ظ… ط¯ط³طھظˆط±ط§طھ ط¨ع¯ظˆ ظˆ ط§ط±ط³ط§ظ„ ط¨ظ‡ ط³ظˆظ¾ط±ع¯ط±ظˆظ‡ًںکœ)</code>\n\nطھظ†ط¸غŒظ… ط¬ظˆط§ط¨ "ظ…طھظ†" ط¬ظˆط§ط¨\n<i>طھظ†ط¸غŒظ… ط¬ظˆط§ط¨غŒ ط¨ظ‡ ط¹ظ†ظˆط§ظ† ظ¾ط§ط³ط® ط®ظˆط¯ع©ط§ط± ط¨ظ‡ ظ¾غŒط§ظ… ظˆط§ط±ط¯ ط´ط¯ظ‡ ظ…ط·ط§ط¨ظ‚ ط¨ط§ ظ…طھظ† ط¨ط§ط´ط¯ ًں“‌</i>\n\nط­ط°ظپ ط¬ظˆط§ط¨ ظ…طھظ†\n<i>ط­ط°ظپ ط¬ظˆط§ط¨ ظ…ط±ط¨ظˆط· ط¨ظ‡ ظ…طھظ† âœ–ï¸ڈ</i>\n\nظ¾ط§ط³ط®ع¯ظˆغŒ ط®ظˆط¯ع©ط§ط± ط±ظˆط´ظ†|ط®ط§ظ…ظˆط´\n<i>طھط؛غŒغŒط± ظˆط¶ط¹غŒطھ ظ¾ط§ط³ط®ع¯ظˆغŒغŒ ط®ظˆط¯ع©ط§ط± طھط¨ظ„غŒط؛â€Œع¯ط± ط¨ظ‡ ظ…طھظ† ظ‡ط§غŒ طھظ†ط¸غŒظ… ط´ط¯ظ‡ ًں“¯</i>\n\nط­ط°ظپ ظ„غŒظ†ع© ط¹ط¶ظˆغŒطھ|طھط§غŒغŒط¯|ط°ط®غŒط±ظ‡ ط´ط¯ظ‡\n<i>ط­ط°ظپ ظ„غŒط³طھ ظ„غŒظ†ع©â€Œظ‡ط§غŒ ظ…ظˆط±ط¯ ظ†ط¸ط± </i>â‌Œ\n\nط­ط°ظپ ع©ظ„غŒ ظ„غŒظ†ع© ط¹ط¶ظˆغŒطھ|طھط§غŒغŒط¯|ط°ط®غŒط±ظ‡ ط´ط¯ظ‡\n<i>ط­ط°ظپ ع©ظ„غŒ ظ„غŒط³طھ ظ„غŒظ†ع©â€Œظ‡ط§غŒ ظ…ظˆط±ط¯ ظ†ط¸ط± </i>ًں’¢\nًں”؛<code>ظ¾ط°غŒط±ظپطھظ† ظ…ط¬ط¯ط¯ ظ„غŒظ†ع© ط¯ط± طµظˆط±طھ ط­ط°ظپ ع©ظ„غŒ</code>ًں”»\n\nط§ط³طھط§ط±طھ غŒظˆط²ط±ظ†غŒظ…\n<i>ط§ط³طھط§ط±طھ ط²ط¯ظ† ط±ط¨ط§طھ ط¨ط§ غŒظˆط²ط±ظ†غŒظ… ظˆط§ط±ط¯ ط´ط¯ظ‡</i>\n\nط§ظپط²ظˆط¯ظ† ط¨ظ‡ ظ‡ظ…ظ‡ غŒظˆط²ط±ظ†غŒظ…\n<i>ط§ظپط²ظˆط¯ظ† ع©ط§ط¨ط± ط¨ط§ غŒظˆط²ط±ظ†غŒظ… ظˆط§ط±ط¯ ط´ط¯ظ‡ ط¨ظ‡ ظ‡ظ…ظ‡ ع¯ط±ظˆظ‡ ظˆ ط³ظˆظ¾ط±ع¯ط±ظˆظ‡ ظ‡ط§ â‍•â‍•</i>\n\nع¯ط±ظˆظ‡ ط¹ط¶ظˆغŒطھ ط¨ط§ط² ط±ظˆط´ظ†|ط®ط§ظ…ظˆط´\n<i>ط¹ط¶ظˆغŒطھ ط¯ط± ع¯ط±ظˆظ‡ ظ‡ط§ ط¨ط§ ط´ط±ط§غŒط· طھظˆط§ظ†ط§غŒغŒ طھط¨ظ„غŒط؛â€Œع¯ط± ط¨ظ‡ ط§ظپط²ظˆط¯ظ† ط¹ط¶ظˆ</i>\n\nطھط±ع© ع©ط±ط¯ظ† ط´ظ†ط§ط³ظ‡\n<i>ط¹ظ…ظ„غŒط§طھ طھط±ع© ع©ط±ط¯ظ† ط¨ط§ ط§ط³طھظپط§ط¯ظ‡ ط§ط² ط´ظ†ط§ط³ظ‡ ع¯ط±ظˆظ‡ ًںڈƒ</i>\n\nط±ط§ظ‡ظ†ظ…ط§\n<i>ط¯ط±غŒط§ظپطھ ظ‡ظ…غŒظ† ظ¾غŒط§ظ… ًں†ک</i>\nم€°م€°م€°ط§م€°م€°م€°\nط³ط§ط²ظ†ط¯ظ‡ : 					\nع©ط§ظ†ط§ظ„ : \n<code>ط¢ط®ط±غŒظ† ط§ط®ط¨ط§ط± ظˆ ط±ظˆغŒط¯ط§ط¯ ظ‡ط§غŒ طھط¨ظ„غŒط؛â€Œع¯ط± ط±ط§ ط¯ط± ع©ط§ظ†ط§ظ„ ظ…ط§ ظ¾غŒع¯غŒط±غŒ ع©ظ†غŒط¯.</code>'
-          return send(msg.chat_id,msg.id, txt, {_ = 'textParseModeHTML'})
         elseif tostring(msg.chat_id):match("^-") then
           if text:match("^([Ll])$") then
             getChat(msg.chat_id, rem)
