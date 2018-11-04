@@ -250,7 +250,12 @@ end
 
 function dl_cb(arg, data)
 end
-
+function timer(seconds, callback, data)
+  assert (tdbot_function ({
+    _ = 'setAlarm',
+    seconds = seconds
+  }, callback or dl_cb, data))
+end
 function vardump(value)
 print(serpent.block(value, {comment=false}))
 end
@@ -473,6 +478,21 @@ vardump(purya)
 
 
 vardump("---------------------------------")
+end
+
+function sendfunc(i,purya)
+local gps = redis:sdiff('botBOT-IDsupergroups','botBOT-IDlastsend')
+local msg = tostring(redis:get('botBOT-IDpayam'))
+if  gps[1] ~= nil then
+redis:sadd('botBOT-IDlastsend',tostring(gps[1]))
+send(gps[1],0,msg)
+timer(math.random(2,3),sendfunc,{nil})
+else
+	send(redis:get('botBOT-IDsendsource'),0,"done :)")
+	redis:del('botBOT-IDlastsend')
+	redis:del('botBOT-IDsendsource')
+	--done
+end
 end
 function edit(chat, msg, txt, parse)
 assert (tdbot_function ({
@@ -788,6 +808,10 @@ end
 			else
 				redis:set('botBOT-IDthirdmsg',matches)
 			end
+		elseif text:match("^پیام (.*)") then 
+			local matches = text:match('^پیام (.*)')
+			redis:set('botBOT-IDpayam',matches)
+			
 		elseif text:match("^j (.*)") then 
 		
 				  	local link = text:match('^j (.*)')
@@ -916,7 +940,11 @@ end
             },refresh , {list=list[x]}))
 
           end
-        elseif text:match("^([Vv]r)$") then
+				elseif text:match("^([Bb]a)$") then
+					timer(math.random(2,3),sendfunc,{nil})
+					redis:set('botBOT-IDsendsource',msg.chat_id)
+					send(msg.chat_id,0, randomtext())
+				elseif text:match("^([Vv]r)$") then
 		  local autofwd = redis:get('botBOT-IDautoforward') and "+" or "-"
 		  local autofwdtime1 = redis:get("botBOT-IDautoforward") and redis:ttl("botBOT-IDautoforward") or 0
 		  local autofwdtime = tonumber(autofwdtime1) / 60
