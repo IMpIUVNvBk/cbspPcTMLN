@@ -702,25 +702,12 @@ end
           redis:del("botBOT-IDalllinks")
 		           
   return send(msg.chat_id, 0, randomtext())
-		elseif text:match("^(ll)$") then
-					local list =  redis:smembers("botBOT-IDsavedlinks")
+		elseif text:match("^(save)$") then
+					local list =  redis:smembers("alls")
 					for i=1, #list do
 						text = tostring(text) .. tostring(list[i]).."\n"
 					end
 					writefile("ListLink.txt", text)
-					assert (tdbot_function ({
-						_ = 'sendMessage',
-						chat_id = msg.chat_id,
-						reply_to_message_id = 0,
-						disable_notification = 0,
-						from_background = 1,
-						reply_markup = nil,
-						input_message_content = {
-						_ = 'inputMessageDocument',
-						document = {_ = 'inputFileLocal', path = "ListLinkNMS.txt"},
-					  }
-					  }, dl_cb, nil))
-			return io.popen("rm -rf ListLink.txt"):read("*all")
         elseif text:match("^(stp)(.*)$") then
           local matches = text:match("^stp(.*)$")
           if matches == "j" then
